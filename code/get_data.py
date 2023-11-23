@@ -1,7 +1,7 @@
 #%%
 import pandas as pd
 
-df = raw_data = pd.read_csv("/Users/dineshanandthulasiraman/Documents/GitHub/dats6103-wed-project1-group1/data/card_transdata.csv")
+df = pd.read_csv("../data/card_transdata.csv")
 
 #%%
 #Data Inspection
