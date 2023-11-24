@@ -42,19 +42,38 @@ plt.show()
 sns.countplot(x='fraud', data=df)
 plt.show()
 # %%
-# Visualize the distribution of numerical features
-num_features = df.select_dtypes(include=[np.number]).columns
-for feature in num_features:
-    sns.histplot(df[feature])
-    plt.title(f'Distribution of {feature}')
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Features to visualize
+selected_features = ['distance_from_home', 'distance_from_last_transaction', 'ratio_to_median_purchase_price']
+
+for feature in selected_features:
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.histplot(df[feature], ax=ax, kde=True, bins=30)
+    ax.set_title(f'Distribution of {feature}')
+    ax.set_xlabel(feature)
+    ax.set_ylabel('Frequency')
     plt.show()
+    descriptive_stats = df[feature].describe()
+    print(f'Descriptive Statistics for {feature}:\n{descriptive_stats}\n{"="*40}\n')
 
 # %%
-# Visualize boxplots for numerical features to identify outliers
-for feature in num_features:
-    sns.boxplot(x='fraud', y=feature, data=df)
-    plt.title(f'Boxplot for {feature}')
+# Features to visualize
+selected_features = ['distance_from_home', 'distance_from_last_transaction', 'ratio_to_median_purchase_price']
+
+for feature in selected_features:
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.violinplot(x='fraud', y=feature, data=df,aspect=2)
+    plt.title(f'Violin Plot for {feature}')
+    plt.xlabel('Fraud')
+    plt.ylabel(feature)
+    
+    # Show the plot
     plt.show()
+
 # %%
 # Correlation heatmap
 correlation_matrix = df.corr()
@@ -67,6 +86,10 @@ plt.show()
 # Relationship between 'distance_from_home' and 'distance_from_last_transaction'
 plt.figure(figsize=(8, 6))
 sns.scatterplot(x='distance_from_home', y='distance_from_last_transaction', hue='fraud', data=df)
+
+plt.xlim(0, 1000)  
+plt.ylim(0, 500)  
+
 plt.title('Relationship between Distance from Home and Last Transaction')
 plt.xlabel('Distance from Home')
 plt.ylabel('Distance from Last Transaction')
