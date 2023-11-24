@@ -70,8 +70,6 @@ for feature in selected_features:
     plt.title(f'Violin Plot for {feature}')
     plt.xlabel('Fraud')
     plt.ylabel(feature)
-    
-    # Show the plot
     plt.show()
 
 # %%
