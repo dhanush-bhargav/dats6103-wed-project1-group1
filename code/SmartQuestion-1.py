@@ -9,7 +9,7 @@ from scipy.stats import chi2_contingency
 # pd.read_csv('your_dataset.csv')  # Uncomment and modify this line if reading from a CSV file
 
 # Display summary statistics
-card_transdata = pd.read_csv(r"data\card_transdata.csv")
+card_transdata = pd.read_csv("data/card_transdata.csv")
 card_transdata.describe()
 
 # %%

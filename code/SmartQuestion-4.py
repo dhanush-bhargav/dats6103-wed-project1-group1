@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.stats import ttest_ind
-card_transdata = pd.read_csv(r"data\card_transdata.csv")
+card_transdata = pd.read_csv("data/card_transdata.csv")
 
 # Data visualization
 sns.boxplot(x='fraud', y='distance_from_last_transaction', data=card_transdata)
