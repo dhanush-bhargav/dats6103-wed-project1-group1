@@ -27,9 +27,9 @@ import seaborn as sns
 
 # %%
 
-# Visualize relationships between numerical variables
-sns.pairplot(df, hue='fraud', diag_kind='kde')
-plt.show()
+# # Visualize relationships between numerical variables
+# sns.pairplot(df, hue='fraud', diag_kind='kde')
+# plt.show()
 # %%
 
 # Visualize correlation matrix

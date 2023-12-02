@@ -7,7 +7,7 @@ import pandas as pd
 
 
 def build_LR_model(X_train, y_train):
-    lr_model = LogisticRegressionCV(cv=10, scoring="recall").fit(X_train, y_train)
+    lr_model = LogisticRegressionCV(cv=10, scoring="recall", class_weight='balanced').fit(X_train, y_train)
     return lr_model
 
 def build_KNN_model(X_train, y_train, k):
@@ -19,7 +19,7 @@ def build_forest_model(X_train, y_train, estimators, depth):
     return RF_model
 
 def build_svc_model(X_train, y_train):
-    svc_model = SVC(kernel='linear').fit(X_train, y_train)
+    svc_model = SVC(kernel='linear', class_weight='balanced').fit(X_train, y_train)
     return svc_model
 
 
