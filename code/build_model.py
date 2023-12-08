@@ -27,19 +27,6 @@ def build_svc_model(X_train, y_train):
 if __name__=="__main__":
     dataset = pd.read_csv("data/card_transdata.csv")
     X_train, X_test, y_train, y_test = split_data.get_split_normalized_data(dataset)
-    # lrcv_model = build_LR_model(X_train, y_train)
-    
-    # knn_model1 = build_KNN_model(X_train, y_train, 10)
-    # knn_model2 = build_KNN_model(X_train, y_train, 100)
-    # knn_model3 = build_KNN_model(X_train, y_train, 250)
-
-    # rf_model1 = build_forest_model(X_train, y_train, 100, 20)
-    # rf_model2 = build_forest_model(X_train, y_train, 100, 10)
-
-    # rf_model3 = build_forest_model(X_train, y_train, 50, 20)
-    # rf_model4 = build_forest_model(X_train, y_train, 50, 10)
-
-    # svc_model = build_svc_model(X_train, y_train)
 
     logit_model = logit("fraud ~ distance_from_home + distance_from_last_transaction + ratio_to_median_purchase_price + repeat_retailer + used_chip + used_pin_number + online_order", dataset).fit()
     print(logit_model.summary())
