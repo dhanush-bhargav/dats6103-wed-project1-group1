@@ -18,4 +18,4 @@ def get_split_normalized_data(dataset, ratio=0.8):
     X_test["distance_from_last_transaction"] = ( X_test["distance_from_last_transaction"] - mean_dist_from_last) / sd_dist_from_last
     X_test["ratio_to_median_purchase_price"] = (X_test["ratio_to_median_purchase_price"] - mean_ratio_to_median) / sd_ratio_to_median
 
-    return X_train, X_test, y_train, y_testt
+    return X_train, X_test, y_train, y_test
