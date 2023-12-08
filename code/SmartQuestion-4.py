@@ -4,11 +4,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.stats import ttest_ind
-card_transdata = pd.read_csv("data/card_transdata.csv")
-
+#card_transdata = pd.read_csv("/Users/manojpadala/Desktop/git/dats6103-wed-project1-group1/data/card_transdata.csv")
+card_transdata = pd.read_csv('your_dataset.csv')
 # Data visualization
 sns.boxplot(x='fraud', y='distance_from_last_transaction', data=card_transdata)
-plt.title('Comparison of Distance from Last Transaction for Fraudulent and Non-Fraudulent Transactions')
+plt.title('Distance from last transaction and the transaction being reported as fraud')
 plt.xlabel('Fraudulent Transaction')
 plt.ylabel('Distance from Last Transaction')
 plt.show()
