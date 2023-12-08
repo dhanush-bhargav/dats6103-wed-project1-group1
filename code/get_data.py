@@ -118,7 +118,7 @@ plt.show()
 #%%
 # Pairplot with a focus on 'fraud'
 sns.pairplot(df, hue='fraud', vars=['distance_from_home', 'distance_from_last_transaction', 'ratio_to_median_purchase_price'])
-plt.suptitle('Pairplot with a Focus on Fraud')
+plt.suptitle('Pairplot')
 plt.show()
 
 # %%
