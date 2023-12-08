@@ -3,10 +3,15 @@ import split_data
 import pandas as pd
 import build_model
 from model_metrics import evaluate_model, plot_confusion_matrix, plot_roc_auc
+from statsmodels.formula.api import logit
 
 #%%
 dataset = pd.read_csv("../data/card_transdata.csv")
 X_train, X_test, y_train, y_test = split_data.get_split_normalized_data(dataset)
+
+#%%
+logit_model = logit("fraud ~ distance_from_home + distance_from_last_transaction + ratio_to_median_purchase_price + repeat_retailer + used_chip + used_pin_number + online_order", dataset).fit()
+print(logit_model.summary())
 
 #%%
 lrcv_model = build_model.build_LR_model(X_train, y_train)
