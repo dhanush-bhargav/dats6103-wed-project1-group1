@@ -4,7 +4,9 @@ import seaborn as sns
 from scipy.stats import ttest_ind
 import matplotlib.pyplot as plt
 import pandas as pd
-card_transdata = pd.read_csv("data/card_transdata.csv")
+card_transdata = pd.read_csv("/Users/manojpadala/Desktop/git/dats6103-wed-project1-group1/data/card_transdata.csv")
+
+#
 # Data visualization
 sns.boxplot(x='fraud', y='distance_from_home', data=card_transdata)
 plt.title('Comparison of Distance from Home for Fraudulent and Non-Fraudulent Transactions')
