@@ -65,8 +65,15 @@ for feature in selected_features:
 selected_features = ['distance_from_home', 'distance_from_last_transaction', 'ratio_to_median_purchase_price']
 
 for feature in selected_features:
+    # Rescale the feature to a range not including zero
+    rescaled_feature = (df[feature] - df[feature].min() + 1)  # Adding 1 to avoid log(0)
+    
+    # Apply log transform to the rescaled feature
+    log_transformed_feature = np.log(rescaled_feature)
+    
+    # Create violin plot with log-transformed feature
     fig, ax = plt.subplots(figsize=(8, 6))
-    sns.violinplot(x='fraud', y=feature, data=df,aspect=2)
+    sns.violinplot(x='fraud', y=log_transformed_feature, data=df, aspect=2)
     plt.title(f'Violin Plot for {feature}')
     plt.xlabel('Fraud')
     plt.ylabel(feature)
