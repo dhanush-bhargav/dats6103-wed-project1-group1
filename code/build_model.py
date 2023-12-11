@@ -19,6 +19,6 @@ def build_forest_model(X_train, y_train, estimators, depth):
     RF_model = RandomForestClassifier(n_estimators=estimators, max_depth=depth).fit(X_train, y_train)
     return RF_model
 
-def build_svc_model(X_train, y_train):
-    svc_model = SVC(kernel='linear', class_weight='balanced', probability=True).fit(X_train, y_train) #class weights are balanced to compensate for imbalanced classes.
+def build_svc_model(X_train, y_train, kernel="linear"):
+    svc_model = SVC(kernel=kernel, class_weight='balanced', probability=True).fit(X_train, y_train) #class weights are balanced to compensate for imbalanced classes.
     return svc_model

@@ -11,7 +11,7 @@ def evaluate_model(y_test, y_pred_proba, cutoff=0.5):
     return accuracy, precision, recall, f1
 
 # Define a function to plot confusion matrices
-def plot_confusion_matrix(y_true, y_pred_proba, labels, cutoff=0.5):
+def plot_confusion_matrix(y_true, y_pred_proba, labels, model_name, cutoff=0.5):
 
     y_pred = y_pred_proba > cutoff
     cm = confusion_matrix(y_true, y_pred)
@@ -20,10 +20,10 @@ def plot_confusion_matrix(y_true, y_pred_proba, labels, cutoff=0.5):
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=labels, yticklabels=labels)
     plt.xlabel('Predicted')
     plt.ylabel('True')
-    plt.title('Confusion Matrix')
+    plt.title(f'Confusion Matrix : {model_name}')
     plt.show()
 
-def plot_roc_auc(y_test, y_pred_proba, model_name, cutoff=0.5):
+def plot_roc_auc(y_test, y_pred_proba, model_name="default", cutoff=0.5):
     
     fpr, tpr, _ = roc_curve(y_test, y_pred_proba)
     auc = roc_auc_score(y_test, y_pred_proba)
