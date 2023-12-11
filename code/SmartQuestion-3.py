@@ -65,4 +65,3 @@ if p_value < 0.05:
 else:
     print("The p-value in the two-sample t-test is greater than or equal to 0.05, so we do not reject the Null Hypothesis.")
 
-# %%

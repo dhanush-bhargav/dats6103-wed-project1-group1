@@ -58,4 +58,3 @@ if p < 0.05:
     print("From the visualization, it's clear that 'Online orders' are more commonly fraudulent.")
 else:
     print("The p-value in the Chi-squared test is greater than or equal to 0.05, so we do not reject the Null Hypothesis.")
-#%%

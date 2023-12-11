@@ -1,18 +1,289 @@
 #%%
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import chi2_contingency, ttest_ind
+
+#%%
 from build_model import *
 from split_data import get_split_normalized_data
 from model_metrics import *
 
 #%%
-dataset = pd.read_csv("../data/card_transdata.csv")
+df = pd.read_csv("../data/card_transdata.csv")
+
+#%%
+#Data Inspection
+print(df.head())
+
+#%%
+#checking information of data
+df.info()
+
+#%%
+#checking null values
+df.isnull().sum()
+
+#%%
+#describing data
+df.describe().transpose()
+
+# %%
+
+# Visualize correlation matrix
+correlation_matrix = df.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.show()
+
+# %%
+# Visualize the distribution of the target variable
+sns.countplot(x='fraud', data=df)
+plt.show()
+
+#%%
+# Features to visualize
+selected_features = ['distance_from_home', 'distance_from_last_transaction', 'ratio_to_median_purchase_price']
+
+for feature in selected_features:
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.histplot(df[feature], ax=ax, kde=True, bins=30)
+    ax.set_title(f'Distribution of {feature}')
+    ax.set_xlabel(feature)
+    ax.set_ylabel('Frequency')
+    plt.show()
+    descriptive_stats = df[feature].describe()
+    print(f'Descriptive Statistics for {feature}:\n{descriptive_stats}\n{"="*40}\n')
+
+# %%
+# Features to visualize
+selected_features = ['distance_from_home', 'distance_from_last_transaction', 'ratio_to_median_purchase_price']
+
+for feature in selected_features:
+    # Rescale the feature to a range not including zero
+    rescaled_feature = (df[feature] - df[feature].min() + 1)  # Adding 1 to avoid log(0)
+    
+    # Apply log transform to the rescaled feature
+    log_transformed_feature = np.log(rescaled_feature)
+    
+    # Create violin plot with log-transformed feature
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.violinplot(x='fraud', y=log_transformed_feature, data=df, aspect=2)
+    plt.title(f'Violin Plot for {feature}')
+    plt.xlabel('Fraud')
+    plt.ylabel(feature)
+    plt.show()
+
+# %%
+# Correlation heatmap
+correlation_matrix = df.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Heatmap')
+plt.show()
 
 #%%
 
-X_train, X_test, y_train, y_test = get_split_normalized_data(dataset)
+# Relationship between 'distance_from_home' and 'distance_from_last_transaction'
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='distance_from_home', y='distance_from_last_transaction', hue='fraud', data=df)
+
+plt.xlim(0, 1000)  
+plt.ylim(0, 500)  
+
+plt.title('Relationship between Distance from Home and Last Transaction')
+plt.xlabel('Distance from Home')
+plt.ylabel('Distance from Last Transaction')
+plt.show()
 
 #%%
+# Analysis of 'ratio_to_median_purchase_price'
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+sns.boxplot(x='fraud', y='ratio_to_median_purchase_price', data=df)
+plt.title('Boxplot of Ratio to Median Purchase Price')
 
+plt.subplot(1, 2, 2)
+sns.histplot(df['ratio_to_median_purchase_price'], bins=30, kde=True)
+plt.title('Distribution of Ratio to Median Purchase Price')
+plt.xlabel('Ratio to Median Purchase Price')
+
+plt.tight_layout(rect=[0, 0, 1, 0.96])
+plt.show()
+
+#%%
+# Analysis of 'repeat_retailer' and 'fraud'
+sns.countplot(x='repeat_retailer', hue='fraud', data=df)
+plt.title('Count of Fraudulent Transactions based on Repeated Retailer')
+plt.xlabel('Repeat Retailer')
+plt.show()
+
+#%%
+# Pairplot with a focus on 'fraud'
+sns.pairplot(df, hue='fraud', vars=['distance_from_home', 'distance_from_last_transaction', 'ratio_to_median_purchase_price'])
+plt.suptitle('Pairplot')
+plt.show()
+
+
+# %%
+# Smart Question :- 1
+
+# Not Fraud in Online Orders (1)
+count_not_fraud_online_order = df[(df['fraud'] == 0) & (df['online_order'] == 1)].shape[0]
+
+# Not Fraud in Offline Orders (0)
+count_not_fraud_offline_order = df[(df['fraud'] == 0) & (df['online_order'] == 0)].shape[0]
+
+#Fraud in Online Orders (1)
+count_fraud_online_order = df[(df['fraud'] == 1) & (df['online_order'] == 1)].shape[0]
+
+#Fraud in Offline Orders (1)
+count_fraud_offline_order = df[(df['fraud'] == 1) & (df['online_order'] == 0)].shape[0]
+
+print("Not Fraud in Online Orders:", count_not_fraud_online_order)
+print("Not Fraud in Offline Orders:", count_not_fraud_offline_order)
+print("Fraud in Online Orders:", count_fraud_online_order)
+print("Fraud in Offline Orders:", count_fraud_offline_order)
+
+# Data visualization
+colors = {'Offline Order': 'blue', 'Online Order': 'orange'}
+sns.countplot(x='fraud', hue='online_order', data=df)
+plt.title('Fraudulent Transactions by Type (Online/Offline)')
+plt.xlabel('Fraudulent Transaction')
+plt.ylabel('Count')
+plt.legend(title='Order Type', labels=colors.keys())
+plt.show()
+
+#%%
+# Hypothesis test (Chi-squared test for independence)
+contingency_table = pd.crosstab(df['fraud'], df['online_order'])
+chi2, p, _, _ = chi2_contingency(contingency_table)
+
+print("H0: There is no associaticon between the type of transaction (online or offline) and fraud.")
+print("H1: There is an association between the type of transaction and fraud.")
+print(f"Chi-squared test p-value: {p}")
+
+if p < 0.05:
+    print("As the p-value in the Chi-squared test is less than 0.05 (Standard Significance Level), we reject the Null Hypothesis.")
+    print("Therefore, we accept the Alternate Hypothesis, which states that there is an association between the type of transaction and fraud.")
+    print("From the visualization, it's clear that 'Online orders' are more commonly fraudulent.")
+else:
+    print("The p-value in the Chi-squared test is greater than or equal to 0.05, so we do not reject the Null Hypothesis.")
+
+# %%
+#
+# Data visualization
+sns.boxplot(x='fraud', y='distance_from_home', data=df)
+plt.title('Comparison of Distance from Home for Fraudulent and Non-Fraudulent Transactions')
+plt.xlabel('Fraudulent Transaction')
+plt.ylabel('Distance from Home')
+plt.show()
+data=df
+
+bins_home = [0, 10, 100, 500, 1000, 4000, 8000, 15000]
+
+bin_labels_home = ['0-10', '10-100', '100-500', '500-1000', '1000-4000', '4000-8000', '8000-15000']
+
+data['range_home'] = pd.cut(data['distance_from_home'], bins=bins_home, labels=bin_labels_home)
+
+grouped_home = data.groupby(['fraud', 'range_home']).size().unstack()
+
+
+grouped_home.T.plot(kind='line', marker='o', figsize=(10, 6))
+plt.xlabel('Range of Distance from Home')
+plt.ylabel('Count of Distance')
+plt.title('Count of Distance from Home by Range')
+plt.xticks(rotation=45)
+plt.legend(title='Fraud', loc='upper left')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+#%%
+import pandas as pd
+
+bins = [0, 10, 100, 500, 1000, 4000, 8000, 15000]
+bin_labels = ['0-10', '10-100', '100-500', '500-1000', '1000-4000', '4000-8000', '8000-15000']
+
+data['range'] = pd.cut(data['distance_from_home'], bins=bins, labels=bin_labels)
+grouped = data.groupby(['fraud', 'range']).size().unstack().fillna(0).astype(int)
+
+print("Table of Count of Distance from Home by Range and Fraud")
+print(grouped)
+
+#%%
+# Hypothesis test (Two-sample t-test)
+t_stat, p_value = ttest_ind(df.loc[df['fraud'] == 0, 'distance_from_home'],
+                            df.loc[df['fraud'] == 1, 'distance_from_home'],
+                            equal_var=False)
+
+print("H0: There is no difference in the mean distance from home between fraudulent and non-fraudulent transactions.")
+print("H1: There is a significant difference in the mean distance from home between fraudulent and non-fraudulent transactions.")
+print(f"Two-sample t-test p-value: {p_value}")
+
+if p_value < 0.05:
+    print("As the p-value in the two-sample t-test is less than 0.05 (Standard Significance Level), we reject the Null Hypothesis.")
+    print("Therefore, we accept the Alternate Hypothesis, which states that there is a significant difference in the mean distance from home between fraudulent and non-fraudulent transactions.")
+    print("This means that a correlation exists between the distance from home where a transaction occurred and whether the transaction was fraudulent.")
+else:
+    print("The p-value in the two-sample t-test is greater than or equal to 0.05, so we do not reject the Null Hypothesis.")
+
+
+# %%
+data=df
+bins = [0, 10, 100, 500, 1000, 4000, 8000, 15000]
+
+bin_labels = ['0-10', '10-100', '100-500', '500-1000', '1000-4000', '4000-8000', '8000-15000']
+
+data['range'] = pd.cut(data['distance_from_last_transaction'], bins=bins, labels=bin_labels)
+
+grouped = data.groupby(['fraud', 'range']).size().unstack()
+
+grouped.T.plot(kind='line', marker='o', figsize=(10, 6))
+plt.xlabel('Range of Distance')
+plt.ylabel('Count of Distance')
+plt.title('Count of Distance from Last Transaction by Range')
+plt.xticks(rotation=45)
+plt.legend(title='Fraud', loc='upper left')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# %%
+bins = [0, 10, 100, 500, 1000, 4000, 8000, 15000]
+bin_labels = ['0-10', '10-100', '100-500', '500-1000', '1000-4000', '4000-8000', '8000-15000']
+data['range'] = pd.cut(data['distance_from_last_transaction'], bins=bins, labels=bin_labels)
+grouped = data.groupby(['fraud', 'range']).size().unstack().fillna(0).astype(int)
+print("Table of Count of Distance from Last Transaction by Range and Fraud")
+print(grouped)
+
+# %%
+# Data visualization
+sns.boxplot(x='fraud', y='distance_from_home', data=df)
+plt.title('Comparison of Distance from Home for Fraudulent and Non-Fraudulent Transactions')
+plt.xlabel('Fraudulent Transaction')
+plt.ylabel('Distance from Home')
+plt.show()
+
+# Hypothesis test (Two-sample t-test)
+t_stat, p_value = ttest_ind(df.loc[df['fraud'] == 0, 'distance_from_last_transaction'],
+                            df.loc[df['fraud'] == 1, 'distance_from_last_transaction'],
+                            equal_var=False)
+
+print("H0: There is no difference in the mean distance from the last transaction between fraudulent and non-fraudulent transactions.")
+print("H1: There is a significant difference in the mean distance from the last transaction between fraudulent and non-fraudulent transactions.")
+print(f"Two-sample t-test p-value: {p_value}")
+
+if p_value < 0.05:
+    print("As the p-value in the two-sample t-test is less than 0.05 (Standard Significance Level), we reject the Null Hypothesis.")
+    print("Therefore, we accept the Alternate Hypothesis, which states that there is a significant difference in the mean distance from the last transaction between fraudulent and non-fraudulent transactions.")
+    print("This means that a correlation exists between the distance from the last transaction and the transaction being reported as fraud.")
+else:
+    print("The p-value in the two-sample t-test is greater than or equal to 0.05, so we do not reject the Null Hypothesis.")
+
+
+#%%
+X_train, X_test, y_train, y_test = get_split_normalized_data(df)
+
+#%%
 lrcv_model = build_LR_model(X_train, y_train)
 
 y_pred_lrcv = lrcv_model.predict_proba(X_train).T[1]
