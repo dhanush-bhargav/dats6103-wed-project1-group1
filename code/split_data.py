@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+
 def get_split_normalized_data(dataset, ratio=0.8):
     features = dataset.drop(columns=["fraud"])
     labels = dataset["fraud"]

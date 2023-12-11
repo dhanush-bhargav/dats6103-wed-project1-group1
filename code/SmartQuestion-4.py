@@ -6,11 +6,45 @@ import pandas as pd
 from scipy.stats import ttest_ind
 #card_transdata = pd.read_csv("/Users/manojpadala/Desktop/git/dats6103-wed-project1-group1/data/card_transdata.csv")
 card_transdata = pd.read_csv('your_dataset.csv')
+# %%
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data=card_transdata
+bins = [0, 10, 100, 500, 1000, 4000, 8000, 15000]
+
+bin_labels = ['0-10', '10-100', '100-500', '500-1000', '1000-4000', '4000-8000', '8000-15000']
+
+data['range'] = pd.cut(data['distance_from_last_transaction'], bins=bins, labels=bin_labels)
+
+grouped = data.groupby(['fraud', 'range']).size().unstack()
+
+grouped.T.plot(kind='line', marker='o', figsize=(10, 6))
+plt.xlabel('Range of Distance')
+plt.ylabel('Count of Distance')
+plt.title('Count of Distance from Last Transaction by Range')
+plt.xticks(rotation=45)
+plt.legend(title='Fraud', loc='upper left')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# %%
+import pandas as pd
+bins = [0, 10, 100, 500, 1000, 4000, 8000, 15000]
+bin_labels = ['0-10', '10-100', '100-500', '500-1000', '1000-4000', '4000-8000', '8000-15000']
+data['range'] = pd.cut(data['distance_from_last_transaction'], bins=bins, labels=bin_labels)
+grouped = data.groupby(['fraud', 'range']).size().unstack().fillna(0).astype(int)
+print("Table of Count of Distance from Last Transaction by Range and Fraud")
+print(grouped)
+
+# %%
+
 # Data visualization
-sns.boxplot(x='fraud', y='distance_from_last_transaction', data=card_transdata)
-plt.title('Distance from last transaction and the transaction being reported as fraud')
+sns.boxplot(x='fraud', y='distance_from_home', data=card_transdata)
+plt.title('Comparison of Distance from Home for Fraudulent and Non-Fraudulent Transactions')
 plt.xlabel('Fraudulent Transaction')
-plt.ylabel('Distance from Last Transaction')
+plt.ylabel('Distance from Home')
 plt.show()
 
 # Hypothesis test (Two-sample t-test)
@@ -29,4 +63,4 @@ if p_value < 0.05:
 else:
     print("The p-value in the two-sample t-test is greater than or equal to 0.05, so we do not reject the Null Hypothesis.")
 
-#%%
+
