@@ -151,13 +151,6 @@ for feature in selected_features:
     plt.ylabel(feature)
     plt.show()
 
-# %%
-# Correlation heatmap
-correlation_matrix = df.corr()
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
-plt.title('Correlation Heatmap')
-plt.show()
-
 #%%
 
 # Relationship between 'distance_from_home' and 'distance_from_last_transaction'
