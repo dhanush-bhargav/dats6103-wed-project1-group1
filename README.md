@@ -1,4 +1,4 @@
-# dats6103-wed-project1-group1
+# Detection of Fraudulent Credit Card Transactions
  
 ## Instructions for cloning repo
 1. Click on the green code button on the upper right corner.
